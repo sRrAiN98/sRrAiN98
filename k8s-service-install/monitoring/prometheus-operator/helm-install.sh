@@ -1,0 +1,13 @@
+helm upgrade --install prometheus . --namespace monitoring \
+--set prometheus.service.type=LoadBalancer \
+--set prometheus.service.port=80 \
+--set grafana.service.type=LoadBalancer \
+--set alertmanager.service.type=LoadBalancer \
+--set alertmanager.service.port=80 \
+--set grafana.adminPassword=q1w2e3r4 \
+--set kubeApiServer.enabled=false \
+--set kubeControllerManager.enabled=false \
+--set kubeEtcd.enabled=false \
+--set kubeScheduler.enabled=false \
+--set kubelet.serviceMonitor.resource=false \
+-f values.yaml,resource-values.yaml,storage-values.yaml,affinity-values.yaml

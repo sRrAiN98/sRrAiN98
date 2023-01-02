@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/bound-by-controller: "yes"
+    pv.kubernetes.io/provisioned-by: kubernetes.io/azure-disk
+    volumehelper.VolumeDynamicallyCreatedByKey: azure-disk-dynamic-provisioner
+  creationTimestamp: "2021-11-09T07:17:13Z"
+  finalizers:
+  - kubernetes.io/pv-protection
+  labels:
+    failure-domain.beta.kubernetes.io/region: koreacentral
+  name: pvc-9c7f2a91-ca32-40dc-9eed-8a9156f4d54b
+spec:
+  accessModes:
+  - ReadWriteOnce
+  azureDisk:
+    cachingMode: ReadOnly
+    diskName: kubernetes-dynamic-pvc-9c7f2a91-ca32-40dc-9eed-8a9156f4d54b
+    diskURI: /subscriptions/d5ee09b5-8400-434f-bc01-edda13c28514/resourceGroups/mc_skr-evpark-d-rg_skr-evpark-d-aks_koreacentral/providers/Microsoft.Compute/disks/kubernetes-dynamic-pvc-9c7f2a91-ca32-40dc-9eed-8a9156f4d54b
+    fsType: ""
+    kind: Managed
+    readOnly: false
+  capacity:
+    storage: 50Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: prometheus-prometheus-prometheus-oper-prometheus-db-prometheus-prometheus-prometheus-oper-prometheus-0
+    namespace: monitoring
+    resourceVersion: "2089511"
+    uid: 9c7f2a91-ca32-40dc-9eed-8a9156f4d54b
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: failure-domain.beta.kubernetes.io/region
+          operator: In
+          values:
+          - koreacentral
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: default
+  volumeMode: Filesystem
+status:
+  phase: Bound

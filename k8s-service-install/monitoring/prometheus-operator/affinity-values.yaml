@@ -1,0 +1,66 @@
+prometheus:
+  prometheusSpec:
+    affinity:
+     nodeAffinity:
+       requiredDuringSchedulingIgnoredDuringExecution:
+         nodeSelectorTerms:
+         - matchExpressions:
+           - key: monitoring
+             operator: In
+             values:
+             - "true"
+    nodeSelector: 
+      monitoring: "true"
+
+alertmanager:
+  alertmanagerSpec:
+    affinity:
+     nodeAffinity:
+       requiredDuringSchedulingIgnoredDuringExecution:
+         nodeSelectorTerms:
+         - matchExpressions:
+           - key: monitoring
+             operator: In
+             values:
+             - "true"
+    nodeSelector:
+      monitoring: "true"
+
+grafana:
+  affinity:
+   nodeAffinity:
+     requiredDuringSchedulingIgnoredDuringExecution:
+       nodeSelectorTerms:
+       - matchExpressions:
+         - key: monitoring
+           operator: In
+           values:
+           - "true"
+  nodeSelector:
+    monitoring: "true"
+
+kube-state-metrics:
+  affinity:
+   nodeAffinity:
+     requiredDuringSchedulingIgnoredDuringExecution:
+       nodeSelectorTerms:
+       - matchExpressions:
+         - key: monitoring
+           operator: In
+           values:
+           - "true"
+  nodeSelector:
+    monitoring: "true"
+
+prometheusOperator:
+  affinity:
+   nodeAffinity:
+     requiredDuringSchedulingIgnoredDuringExecution:
+       nodeSelectorTerms:
+       - matchExpressions:
+         - key: monitoring
+           operator: In
+           values:
+           - "true"
+  nodeSelector:
+    monitoring: "true"

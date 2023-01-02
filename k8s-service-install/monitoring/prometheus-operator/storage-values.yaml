@@ -1,0 +1,32 @@
+prometheus:
+  prometheusSpec:
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: default
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
+
+alertmanager:
+  alertmanagerSpec:
+      storage:
+       volumeClaimTemplate:
+         spec:
+           storageClassName: default
+           accessModes: ["ReadWriteOnce"]
+           resources:
+             requests:
+               storage: 10Gi
+
+grafana:
+  persistence:
+    type: pvc
+    enabled: true
+    storageClassName: default
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+    finalizers:
+      - kubernetes.io/pvc-protection

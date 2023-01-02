@@ -1,0 +1,102 @@
+# Default values for entropy.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+revisionHistoryLimit: 1
+image:
+  repository: harbor.srrain.kro.kr/front/webui #image url
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "20"
+
+imagePullSecrets:
+  - name: harborcred
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations:
+  'consul.hashicorp.com/connect-inject': 'true'
+  'consul.hashicorp.com/sidecar-proxy-cpu-request': '15m' ##HPA를 사용할 경우 side car container도 request가 필요
+  'consul.hashicorp.com/sidecar-proxy-memory-request': '30M'
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+service:
+  type: LoadBalancer
+  port: 80
+
+deployment:
+  port: 8080
+
+resources:
+  requests:
+    memory: "100Mi"
+    cpu: "100m"
+  limits:
+    memory: "500Mi"
+    cpu: "500m"
+
+## 현재 deployment.yaml에 적용되어 있지 않음
+readinessProbe:
+  httpGet:
+    path: '/actuator/health'
+    port: 8080
+  initialDelaySeconds: 10
+  timeoutSeconds: 2
+  periodSeconds: 5
+  failureThreshold: 10
+livenessProbe:
+  httpGet:
+    path: '/actuator/health'
+    port: 8080
+  initialDelaySeconds: 120
+  timeoutSeconds: 2
+  periodSeconds: 5
+  failureThreshold: 5
+
+##argocd canary##
+canary:
+  ## 의도한 파드의 수에 대해 생성할 수 있는 최대 파드의 수를 지정
+  maxSurge: "40%" 
+  ## 업데이트 프로세스 중에 사용할 수 없는 최대 파드의 수를 지정
+  maxUnavailable: "25%"
+  steps:
+    ## n%의 비율을 최신버전으로 pod를 생성하고 트래픽을 전송함 
+    - setWeight: 100 
+    ## 최신 버전으로 넘어갈 대기시간(스텝이 여러개일때 일정 비율로 최신버전으로 배포할 때 사용)
+    - pause: {duration: 1s}
+
+##HPA##
+minReplicas: 1
+maxReplicas: 1
+metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80 
+        ## cpu 사용률이 80% 이상일경우 알고리즘 동작
+behavior:
+  scaleDown:
+    stabilizationWindowSeconds: 300 
+    ## 300초 동안 cpu 사용률 제한을 넘지 못할경우 pod 30초 마다 1개씩 축소
+    policies:
+      - type: Pods
+        value: 1
+        periodSeconds: 30
+  scaleUp:
+    stabilizationWindowSeconds: 0
+    ## cpu 사용량이 임계치를 넘긴 즉시 현재 pod count의 100%를 확장
+    policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 1
+
+securityContext: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
